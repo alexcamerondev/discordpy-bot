@@ -1,0 +1,8 @@
+{
+    "python.pythonPath": "D:\\Python\\python.exe",
+    "todo.timekeeping.created.enabled": true,
+    "todo.timekeeping.created.format": "ddd MM/DD/YYYY - hh:mm A",
+    "python.linting.enabled": true,
+    "python.linting.pylintEnabled": true,
+    "python.linting.banditEnabled": false,
+}
