@@ -13,5 +13,5 @@ git clone https://github.com/alexcamerondev/discordpy-bot.git
 #### Install dependencies
 
 ```
-pip install or pipenv install
+pip install
 ```

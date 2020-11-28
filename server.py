@@ -16,11 +16,13 @@ import ctypes.util
 from datetime import date
 from classes.channel import Channel
 
+#CONSTANTS
 COMMAND_PREFIX = '!'
 
 #Environment 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 DISCORD_OWNER = os.getenv("DISCORD_OWNER")
+
 logger = Logs('server')
 whitelist = WhiteList()
 bot = Bot(command_prefix=COMMAND_PREFIX,case_insensitive=True)
@@ -41,8 +43,6 @@ async def on_ready():
     global autoposter
     autoposter = AutoPoster('news', bot, api)
 
-    # await keep_alive()
-    
 @bot.event
 async def on_message(message):
     try:
