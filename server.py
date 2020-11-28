@@ -16,12 +16,14 @@ import ctypes.util
 from datetime import date
 from classes.channel import Channel
 
+COMMAND_PREFIX = '!'
+
 #Environment 
 BOT_TOKEN = os.getenv("BOT_TOKEN")
 DISCORD_OWNER = os.getenv("DISCORD_OWNER")
 logger = Logs('server')
 whitelist = WhiteList()
-bot = Bot(command_prefix='!',case_insensitive=True)
+bot = Bot(command_prefix=COMMAND_PREFIX,case_insensitive=True)
 server_connected = False
 #https://discordpy.readthedocs.io/en/latest/migrating.html
 #https://discordpy.readthedocs.io/en/latest/faq.html#how-do-i-send-a-message-to-a-specific-channel
@@ -190,7 +192,7 @@ async def msgs(ctx, channel='legendary'):
         for message in channel_message_list:
             message.content = message.content.strip()
             if(message.author != bot.user):               
-                if(not message.content.startswith("!") and message.content != "" or None and not message.is_system()): #Filter commands and empty strings
+                if(not message.content.startswith(COMMAND_PREFIX) and message.content != "" or None and not message.is_system()): #Filter commands and empty strings
                     logger.log(f"{message.created_at.strftime('%A, %B %d %Y @ %I:%M:%S %p')} -> {message.author} -> {message.content}")
                 if(message.is_system()):
                      logger.log(f"System message: {message.system_content} @ {message.created_at.strftime('%A, %B %d %Y @ %I:%M:%S %p')}", Fore.MAGENTA)
