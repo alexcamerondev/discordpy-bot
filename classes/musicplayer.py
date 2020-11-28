@@ -44,36 +44,18 @@ class MusicPlayer:
                 self.songs_source = await self.songs.get()#Get our songs
                 await self.change_status(self.songs_source['name'])#Update bot status to song name
                 self.current_song = self.songs_source['name']#Set our current song
-                self.current_song_path = self.songs_source['path']#Set current song file path
+                self.current_song_path = self.songs_source["path"] 
                 source = await discord.FFmpegOpusAudio.from_probe(self.current_song_path, executable=self.FFMPEG_URL_PATH, method='fallback')#Create local FFMPEG process to play mp3
                 self.voice_client.play(source, after=self.on_after)#Invoke discord client to play our ffmpeg source with onafter function hook.
                 self.logger.log(f"Playing {self.songs_source['name']} with a duration of {self.songs_source['length']}s")
                 await self.play_next_song.wait() #This will block the thread until we finish our task aka mp3 song in this case.       
         except Exception as e:
             self.play_next_song.clear()#Clear our internal flags
-            self.songs_source = {}  #Reset the entire dictionary object as something bad happened.
+            self.songs_source = {}  #Reset the entire dictionary object as something bad happened and we want out.
             self.audio_player_running = False #Force loop to exit.
             self.is_playing = False #Quit playing
             self.logger.log(f"Exception aud_player :: {repr(e)}", Fore.RED)   
             
-    async def get_music_urls_from_dir(self,dir_path, file_ext = "mp3"):
-        # music_list_count = 0
-        song_dict = {}
-        try:      
-            with os.scandir(dir_path) as it:
-                for entry in it:
-                    if not entry.name.startswith('.') and entry.is_file() and entry.name.endswith(f".{file_ext}"):
-                        # music_list_count = music_list_count + 1
-                        audio = MP3(entry.path) #pip install mutagen for getting mp3 data such as duration
-                        song_dict[entry.path] = {
-                            "name" : entry.name,
-                            "length" : audio.info.length, 
-                        }
-            return song_dict   
-        except Exception as e:             
-            self.logger.log(f"Exception get_music_urls_from_dir :: {repr(e)}", Fore.RED)    
-        return None   
-    
     async def change_status(self, name="Bumpin tunes", activity="playing"):
         """Name: Name of your status and Activity: streaming, playing, listening, watching are accepted parameters"""
         try:     
@@ -92,6 +74,26 @@ class MusicPlayer:
         except Exception as e:             
             self.logger.log(f"Exception change_status :: {repr(e)}", Fore.RED)   
             
+    async def get_music_urls_from_dir(self,dir_path, file_ext = "mp3"):
+        music_track_number = 0
+        song_dict = {}
+        try:      
+            with os.scandir(dir_path) as it:
+                for entry in it:
+                    if not entry.name.startswith('.') and entry.is_file() and entry.name.endswith(f".{file_ext}"):
+                        music_track_number = music_track_number + 1
+                        path = str(entry.path)
+                        audio = MP3(path) #pip install mutagen for getting mp3 data such as duration
+                        song_dict[music_track_number] = {
+                            "name" : entry.name,
+                            "length" : audio.info.length, 
+                            "path" : path
+                        }                      
+            return song_dict   
+        except Exception as e:             
+            self.logger.log(f"Exception get_music_urls_from_dir :: {repr(e)}", Fore.RED)    
+        return None           
+    
     async def play_music_dir(self, music_directory = r"D:\Music", file_type = "mp3"):     
         """Name: Gathers a list of all music file types and plays them in sequence collected."""
         try:
@@ -99,8 +101,8 @@ class MusicPlayer:
             music_dict = await self.get_music_urls_from_dir(music_directory, file_type)     
             if music_dict is not None:
                 for id, song_data in music_dict.items():#This should allow us to run timer code so it will play the next song as one finishes.
-                    self.logger.log(f"Added {song_data['name']} from url path: {song_data['path']}")  #returned url paths.
-                    await self.songs.put(song_data)            
+                    self.logger.log(f"Added {id} - {song_data['name']}")  #returned url paths.
+                    await self.songs.put(song_data)        
                 self.logger.log(f"Finished added all songs in directory to queue system", Fore.GREEN)
                 self.bot.loop.create_task(self.aud_player())
         except Exception as e:

@@ -36,9 +36,9 @@ class AutoPoster:
         self.news_timer = None
         
         #Weather Queue Stuff
-        self.weather_queue = asyncio.Queue()
-        self.weather_next_in_queue = asyncio.Event()
-        self.current_weather = None
+        # self.weather_queue = asyncio.Queue()
+        # self.weather_next_in_queue = asyncio.Event()
+        # self.current_weather = None
         
     async def random_news_topic(self):
         return str(random.choice(self.news_topics))  
@@ -68,8 +68,7 @@ class AutoPoster:
         index = 0
         news_dictionary = {}
         for topic in self.news_topics:
-            #We will generate posts to queue for a timelimit. Using dictionary to serialize and save as json\
-            #Will have to build the topics into database to easily update them.
+            #TODO: Need to restructure this, no need of DICT
             news_dictionary[index] = {
                 "topic": topic
             }
