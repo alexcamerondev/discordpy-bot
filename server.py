@@ -24,7 +24,6 @@ DISCORD_OWNER = os.getenv("DISCORD_OWNER")
 logger = Logs('server')
 whitelist = WhiteList()
 bot = Bot(command_prefix=COMMAND_PREFIX,case_insensitive=True)
-server_connected = False
 #https://discordpy.readthedocs.io/en/latest/migrating.html
 #https://discordpy.readthedocs.io/en/latest/faq.html#how-do-i-send-a-message-to-a-specific-channel
 #Bot Events
@@ -41,9 +40,7 @@ async def on_ready():
     api = API(whitelist)
     global autoposter
     autoposter = AutoPoster('news', bot, api)
-    
-    global server_connected
-    server_connected = True
+
     # await keep_alive()
     
 @bot.event
