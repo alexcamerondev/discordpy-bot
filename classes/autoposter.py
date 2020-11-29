@@ -26,7 +26,7 @@ class AutoPoster:
         #Main queue running flag
         self.auto_poster_queue_running_flag = True
         self.is_running = False
-        self.queue_playing = False
+        # self.queue_playing = False
         
         #News Queue stuff
         self.news_queue = asyncio.Queue()#Setup a queue
@@ -55,14 +55,15 @@ class AutoPoster:
                 await self.news_next_in_queue.wait() 
             
             #Reset vars here when the while loop exits:
-            
+            self.clean_up()#Clean up when finished so we can reuse.. 
         except Exception as e:
-            self.news_next_in_queue.clear()          
-            self.auto_poster_queue_running_flag = False
-            self.is_running = False
+            self.clean_up()
             self.logger.log(f"Exception auto_poster_loop :: {repr(e)}", Fore.RED)
-            
         
+    def clean_up(self):
+        self.news_next_in_queue.clear()          
+        self.auto_poster_queue_running_flag = False
+        self.is_running = False
     #A function even ron burgundy has no access to.
     async def __create_news(self):
         index = 0
