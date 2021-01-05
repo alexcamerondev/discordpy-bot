@@ -1,6 +1,6 @@
 from classes.logs import Logs
 from classes.whitelist import WhiteList
-from classes.musicplayer import MusicPlayer
+# from classes.musicplayer import MusicPlayer
 from classes.private.api import API
 from classes.autoposter import AutoPoster
 import classes.settings
@@ -11,8 +11,8 @@ import json
 import atexit
 from colorama import deinit, Fore
 import asyncio
-import ctypes
-import ctypes.util
+# import ctypes
+# import ctypes.util
 from datetime import date
 from classes.channel import Channel
 
@@ -31,13 +31,12 @@ bot = Bot(command_prefix=COMMAND_PREFIX,case_insensitive=True)
 #Bot Events
 @bot.event
 async def on_ready():
-
-    ctypes.windll.kernel32.SetConsoleTitleW("Discord Bot")
+    # ctypes.windll.kernel32.SetConsoleTitleW("Discord Bot") -> windows version only
     logger.log("Discord bot up and running..", Fore.LIGHTGREEN_EX)
     await initial_activity(name="Starting up engines") 
     logger.log(f"Loaded whitelists", Fore.GREEN)
-    global music_player
-    music_player = MusicPlayer(bot,"Music")
+    # global music_player
+    # music_player = MusicPlayer(bot,"Music")
     global api 
     api = API(whitelist)
     global autoposter
@@ -106,7 +105,7 @@ def start_bot():
         bot.loop.run_until_complete(bot.start(BOT_TOKEN))  
     except KeyboardInterrupt:  
         exit_methods()
-        bot.loop.run_until_complete(bot.logout())  
+        # bot.loop.run_until_complete(bot.logout())  
     # finally:  
     #     bot.loop.close()  
 
@@ -129,44 +128,49 @@ async def auto_post(ctx):
 #https://discordpy.readthedocs.io/en/async/api.html#discord.opus.load_opus voice and youtube music
 # Step 1: pip or pipenv install pynacl and install -U discord.py[voice]
 # Step 2: Find libopus dll on the depths of the internet and manually load it
-@bot.command()
-async def next(ctx):
-    if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
-        music_player.next_song()
+# @bot.command()
+# async def next(ctx):
+#     if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
+#         music_player.next_song()
         
-@bot.command()
-async def pause(ctx):
-    if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
-        await music_player.pause_voice()
+# @bot.command()
+# async def pause(ctx):
+#     if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
+#         await music_player.pause_voice()
         
+# @bot.command()
+# async def resume(ctx):
+#     if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
+#         await music_player.resume_voice()
+
 @bot.command()
-async def resume(ctx):
-    if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
-        await music_player.resume_voice()
+async def kill_post(self):
+    autoposter.clean_up()  
+    logger.log(f"cleaned up")     
+
+# @bot.command()
+# async def stop(ctx):
+#     if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
+#         await music_player.stop_voice()
         
-@bot.command()
-async def stop(ctx):
-    if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
-        await music_player.stop_voice()
+# @bot.command()
+# async def leave(ctx):
+#     if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
+#         await music_player.voice_client.disconnect()
         
-@bot.command()
-async def leave(ctx):
-    if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:
-        await music_player.voice_client.disconnect()
-        
-@bot.command()
-async def music(ctx):
-    try:
-        if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:       
-            logger.log(f"isPlaying: {music_player.is_playing}")
-            if music_player.is_playing is not True:
-                music_player.is_playing = True
-                logger.log(f"Music bot requested by {ctx.message.author}")
-                await music_player.play_music_dir()         
-            else:
-                await ctx.message.channel.send('Music is already playing, you must !leave to reset it or !next to go to next in queue, and !resume to unpause a !pause.')
-    except Exception as e:             
-        logger.log(f"Exception occurred :: {repr(e)}", Fore.RED)    
+# @bot.command()
+# async def music(ctx):
+#     try:
+#         if str(ctx.message.author) in whitelist.adminwhitelist['discord_users'] or str(ctx.message.author) in whitelist.publicwhitelist['discord_users']:       
+#             logger.log(f"isPlaying: {music_player.is_playing}")
+#             if music_player.is_playing is not True:
+#                 music_player.is_playing = True
+#                 logger.log(f"Music bot requested by {ctx.message.author}")
+#                 await music_player.play_music_dir()         
+#             else:
+#                 await ctx.message.channel.send('Music is already playing, you must !leave to reset it or !next to go to next in queue, and !resume to unpause a !pause.')
+#     except Exception as e:             
+#         logger.log(f"Exception occurred :: {repr(e)}", Fore.RED)    
 
 @bot.command()
 async def cat(ctx):
