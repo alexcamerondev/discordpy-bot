@@ -17,11 +17,9 @@ pip install
 ```
 
 
-## Linux Start
-pipenv run python server.py
+## Start
+pipenv run python3 server.py
 
 
-# Create a scheduled job on linux via CRON
-
-crontab -e
-@reboot  /home/user/startdiscordbot.sh
+## Service on linux
+I would suggest to create a custom service that auto restarts on linux. I accomplished this with systemd. 
